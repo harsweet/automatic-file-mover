@@ -1,4 +1,6 @@
 import os.path
+import shutil
+import time
 
 
 def welcomeMessage():
@@ -29,7 +31,7 @@ def getInfo():
             print("Oops!! That doesn't look like a valid folder path. Please try again")
 
 
-    print("Enter the source folder paths. Enter \"done\" to move onto the next prompt.")
+    print("\n\nEnter the destination folder paths. Enter \"done\" to move onto the next prompt.")
     while True:
         print()
         given_path = input("Destination Folder Path: ")
@@ -51,11 +53,36 @@ def getInfo():
         else:
             info["file_types"].append(given_type)
 
+        return info
+
+
+
+def moveFiles(info):
+
+    print("\n\n\nThe file mover is now active and should move your file(s) within 10 seconds")
+    print("Press ^C (option + C) to force exit and stop moving!!")
+
+    # For each source folder
+    while True:
+        for source_folder in info["sources"]:
+            # for each file in the source folder
+            for file_name in os.listdir(source_folder):
+                # for each of the file types
+                for file_type in info["file_types"]:
+                # if the file is of any of those file types
+                    if file_name.endswith(file_type):
+                    # then move it to each of the destination folders
+                        for destination_folder in info["destinations"]:
+                            shutil.copyfile(source_folder+'/'+file_name, destination_folder+'/'+file_name)
+                        os.remove(source_folder+'/'+file_name)
+        time.sleep(10)
+    
 
 
 def main():
     welcomeMessage()
-    getInfo()
+    desired_info = getInfo()
+    moveFiles(desired_info)
 
 
 
